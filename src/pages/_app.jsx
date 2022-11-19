@@ -7,6 +7,7 @@ import { AppProvider } from '@/AppContext';
 
 
 import awsmobile from '../aws-exports';
+import { useState } from 'react';
 
 Auth.configure(awsmobile);
 
@@ -17,10 +18,10 @@ Amplify.configure({
 
 function App({ Component, pageProps }) {
   return (
-    <AppProvider>
-      <Component {...pageProps} />
-    </AppProvider>
+      <AppProvider>
+        <Component {...pageProps} />
+      </AppProvider>
   )
 }
 
-export default withAuthenticator(App);
+export default withAuthenticator(App)

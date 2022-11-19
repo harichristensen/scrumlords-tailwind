@@ -46,11 +46,13 @@ export const AppProvider = ({ children, hub }) => {
     console.log(signUp)
     if (signUp === true){
       const createUserInfo = async () => {
+        const curUser = Auth.currentAuthenticatedUser()
         console.log("hello")
         try {
+          console.log(curUser)
           await DataStore.save(
             newUser = new UserInfo({
-              currentBooks: {}, bookHistory: {}, fines: {}, admin: false
+              currentBooks: [], fines: [], admin: false, age: curUser.age, firstName: curUser.name, lastName: curUser.family_name, accountId: curUser.id, email: curUser.username
             })
           );
         } catch(e) {
@@ -178,34 +180,21 @@ export const AppProvider = ({ children, hub }) => {
   const deleteUser = async (user) => {
     const client = new CognitoIdentityProviderClient({ region: "REGION" });
     console.log(newUserInfo)
-    let newUser;
     try {
-      client.admin
-      newUser = await Auth.deleteUser({
-          username: newUserInfo.email,
-          password: newUserInfo.password,
-          attributes: {
-            age: newUserInfo.email,
-            firstName: newUserInfo.firstName,
-            lastName: newUserInfo.lastName,
-          },
-          autoSignIn: { // optional - enables auto sign in after user is confirmed
-              enabled: true,
-          }
-      });
+      await client.adminDelete({
+        UserPoolId: "us-west-2_bc4RN7HYt",
+        Username: user.email,
+      })
     } catch (error) {
-        console.log('error signing up:', error);
+        console.log('error deleting user in cognito:', error);
     }
-
-
+    for (b in bookList) {
+      b.userList = b.userList.filter(buser => buser.email != user.email)
+    }
     try {
-      await DataStore.save(
-        newUser = new User({
-          email: newUserInfo.email, firstName: newUserInfo.firstName, lastName: newUserInfo.lastName, currentBooks: [], fines: [], admin: newUserInfo.admin, accountId: newUser, age: newUserInfo.age
-        })
-      );
-    } catch(e) {
-      console.log(e)
+      await DataStore.delete(user)
+    } catch (error) {
+        console.log('error deleting user in datastore:', error);
     }
   }
 
