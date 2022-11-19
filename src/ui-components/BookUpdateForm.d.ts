@@ -5,23 +5,23 @@
  **************************************************************************/
 
 import * as React from "react";
-import { BookInfo } from "../models";
+import { Book } from "../models";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type BookInfoUpdateFormInputValues = {
+export declare type BookUpdateFormInputValues = {
     over18?: boolean;
     title?: string;
     author?: string;
     description?: string;
     numberAvailable?: number;
-    currentUsers?: string;
+    currentUsers?: string[];
 };
-export declare type BookInfoUpdateFormValidationValues = {
+export declare type BookUpdateFormValidationValues = {
     over18?: ValidationFunction<boolean>;
     title?: ValidationFunction<string>;
     author?: ValidationFunction<string>;
@@ -30,25 +30,25 @@ export declare type BookInfoUpdateFormValidationValues = {
     currentUsers?: ValidationFunction<string>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type BookInfoUpdateFormOverridesProps = {
-    BookInfoUpdateFormGrid?: FormProps<GridProps>;
+export declare type BookUpdateFormOverridesProps = {
+    BookUpdateFormGrid?: FormProps<GridProps>;
     over18?: FormProps<SwitchFieldProps>;
     title?: FormProps<TextFieldProps>;
     author?: FormProps<TextFieldProps>;
     description?: FormProps<TextFieldProps>;
     numberAvailable?: FormProps<TextFieldProps>;
-    currentUsers?: FormProps<TextAreaFieldProps>;
+    currentUsers?: FormProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type BookInfoUpdateFormProps = React.PropsWithChildren<{
-    overrides?: BookInfoUpdateFormOverridesProps | undefined | null;
+export declare type BookUpdateFormProps = React.PropsWithChildren<{
+    overrides?: BookUpdateFormOverridesProps | undefined | null;
 } & {
     id?: string;
-    bookInfo?: BookInfo;
-    onSubmit?: (fields: BookInfoUpdateFormInputValues) => BookInfoUpdateFormInputValues;
-    onSuccess?: (fields: BookInfoUpdateFormInputValues) => void;
-    onError?: (fields: BookInfoUpdateFormInputValues, errorMessage: string) => void;
+    book?: Book;
+    onSubmit?: (fields: BookUpdateFormInputValues) => BookUpdateFormInputValues;
+    onSuccess?: (fields: BookUpdateFormInputValues) => void;
+    onError?: (fields: BookUpdateFormInputValues, errorMessage: string) => void;
     onCancel?: () => void;
-    onChange?: (fields: BookInfoUpdateFormInputValues) => BookInfoUpdateFormInputValues;
-    onValidate?: BookInfoUpdateFormValidationValues;
+    onChange?: (fields: BookUpdateFormInputValues) => BookUpdateFormInputValues;
+    onValidate?: BookUpdateFormValidationValues;
 } & React.CSSProperties>;
-export default function BookInfoUpdateForm(props: BookInfoUpdateFormProps): React.ReactElement;
+export default function BookUpdateForm(props: BookUpdateFormProps): React.ReactElement;

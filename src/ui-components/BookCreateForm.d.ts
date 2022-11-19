@@ -6,44 +6,47 @@
 
 import * as React from "react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type BookInfoCreateFormInputValues = {
+export declare type BookCreateFormInputValues = {
+    over18?: boolean;
     title?: string;
     author?: string;
     description?: string;
     numberAvailable?: number;
-    over18?: boolean;
+    currentUsers?: string[];
 };
-export declare type BookInfoCreateFormValidationValues = {
+export declare type BookCreateFormValidationValues = {
+    over18?: ValidationFunction<boolean>;
     title?: ValidationFunction<string>;
     author?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
     numberAvailable?: ValidationFunction<number>;
-    over18?: ValidationFunction<boolean>;
+    currentUsers?: ValidationFunction<string>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type BookInfoCreateFormOverridesProps = {
-    BookInfoCreateFormGrid?: FormProps<GridProps>;
+export declare type BookCreateFormOverridesProps = {
+    BookCreateFormGrid?: FormProps<GridProps>;
+    over18?: FormProps<SwitchFieldProps>;
     title?: FormProps<TextFieldProps>;
     author?: FormProps<TextFieldProps>;
-    description?: FormProps<TextAreaFieldProps>;
+    description?: FormProps<TextFieldProps>;
     numberAvailable?: FormProps<TextFieldProps>;
-    over18?: FormProps<SwitchFieldProps>;
+    currentUsers?: FormProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type BookInfoCreateFormProps = React.PropsWithChildren<{
-    overrides?: BookInfoCreateFormOverridesProps | undefined | null;
+export declare type BookCreateFormProps = React.PropsWithChildren<{
+    overrides?: BookCreateFormOverridesProps | undefined | null;
 } & {
     clearOnSuccess?: boolean;
-    onSubmit?: (fields: BookInfoCreateFormInputValues) => BookInfoCreateFormInputValues;
-    onSuccess?: (fields: BookInfoCreateFormInputValues) => void;
-    onError?: (fields: BookInfoCreateFormInputValues, errorMessage: string) => void;
+    onSubmit?: (fields: BookCreateFormInputValues) => BookCreateFormInputValues;
+    onSuccess?: (fields: BookCreateFormInputValues) => void;
+    onError?: (fields: BookCreateFormInputValues, errorMessage: string) => void;
     onCancel?: () => void;
-    onChange?: (fields: BookInfoCreateFormInputValues) => BookInfoCreateFormInputValues;
-    onValidate?: BookInfoCreateFormValidationValues;
+    onChange?: (fields: BookCreateFormInputValues) => BookCreateFormInputValues;
+    onValidate?: BookCreateFormValidationValues;
 } & React.CSSProperties>;
-export default function BookInfoCreateForm(props: BookInfoCreateFormProps): React.ReactElement;
+export default function BookCreateForm(props: BookCreateFormProps): React.ReactElement;

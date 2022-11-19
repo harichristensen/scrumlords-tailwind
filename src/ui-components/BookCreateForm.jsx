@@ -7,18 +7,154 @@
 /* eslint-disable */
 import * as React from "react";
 import { fetchByPath, validateField } from "./utils";
-import { BookInfo } from "../models";
+import { Book } from "../models";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import {
+  Badge,
   Button,
+  Divider,
   Flex,
   Grid,
+  Icon,
+  ScrollView,
   SwitchField,
-  TextAreaField,
+  Text,
   TextField,
+  useTheme,
 } from "@aws-amplify/ui-react";
 import { DataStore } from "aws-amplify";
-export default function BookInfoCreateForm(props) {
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+}) {
+  const { tokens } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    if (
+      (currentFieldValue !== undefined ||
+        currentFieldValue !== null ||
+        currentFieldValue !== "") &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  return (
+    <React.Fragment>
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Text>{label}</Text>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button
+            size="small"
+            variation="link"
+            color={tokens.colors.brand.primary[80]}
+            isDisabled={hasError}
+            onClick={addItem}
+          >
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+}
+export default function BookCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -31,12 +167,14 @@ export default function BookInfoCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
+    over18: false,
     title: undefined,
     author: undefined,
     description: undefined,
     numberAvailable: undefined,
-    over18: false,
+    currentUsers: [],
   };
+  const [over18, setOver18] = React.useState(initialValues.over18);
   const [title, setTitle] = React.useState(initialValues.title);
   const [author, setAuthor] = React.useState(initialValues.author);
   const [description, setDescription] = React.useState(
@@ -45,22 +183,30 @@ export default function BookInfoCreateForm(props) {
   const [numberAvailable, setNumberAvailable] = React.useState(
     initialValues.numberAvailable
   );
-  const [over18, setOver18] = React.useState(initialValues.over18);
+  const [currentUsers, setCurrentUsers] = React.useState(
+    initialValues.currentUsers
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
+    setOver18(initialValues.over18);
     setTitle(initialValues.title);
     setAuthor(initialValues.author);
     setDescription(initialValues.description);
     setNumberAvailable(initialValues.numberAvailable);
-    setOver18(initialValues.over18);
+    setCurrentUsers(initialValues.currentUsers);
+    setCurrentCurrentUsersValue(undefined);
     setErrors({});
   };
+  const [currentCurrentUsersValue, setCurrentCurrentUsersValue] =
+    React.useState(undefined);
+  const currentUsersRef = React.createRef();
   const validations = {
+    over18: [{ type: "Required" }],
     title: [{ type: "Required" }],
-    author: [],
+    author: [{ type: "Required" }],
     description: [{ type: "Required" }],
     numberAvailable: [{ type: "Required" }],
-    over18: [],
+    currentUsers: [{ type: "Required" }],
   };
   const runValidationTasks = async (fieldName, value) => {
     let validationResponse = validateField(value, validations[fieldName]);
@@ -80,11 +226,12 @@ export default function BookInfoCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
+          over18,
           title,
           author,
           description,
           numberAvailable,
-          over18,
+          currentUsers,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -109,7 +256,7 @@ export default function BookInfoCreateForm(props) {
           modelFields = onSubmit(modelFields);
         }
         try {
-          await DataStore.save(new BookInfo(modelFields));
+          await DataStore.save(new Book(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -123,8 +270,37 @@ export default function BookInfoCreateForm(props) {
         }
       }}
       {...rest}
-      {...getOverrideProps(overrides, "BookInfoCreateForm")}
+      {...getOverrideProps(overrides, "BookCreateForm")}
     >
+      <SwitchField
+        label="Over18"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={over18}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              over18: value,
+              title,
+              author,
+              description,
+              numberAvailable,
+              currentUsers,
+            };
+            const result = onChange(modelFields);
+            value = result?.over18 ?? value;
+          }
+          if (errors.over18?.hasError) {
+            runValidationTasks("over18", value);
+          }
+          setOver18(value);
+        }}
+        onBlur={() => runValidationTasks("over18", over18)}
+        errorMessage={errors.over18?.errorMessage}
+        hasError={errors.over18?.hasError}
+        {...getOverrideProps(overrides, "over18")}
+      ></SwitchField>
       <TextField
         label="Title"
         isRequired={true}
@@ -133,11 +309,12 @@ export default function BookInfoCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              over18,
               title: value,
               author,
               description,
               numberAvailable,
-              over18,
+              currentUsers,
             };
             const result = onChange(modelFields);
             value = result?.title ?? value;
@@ -154,17 +331,18 @@ export default function BookInfoCreateForm(props) {
       ></TextField>
       <TextField
         label="Author"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              over18,
               title,
               author: value,
               description,
               numberAvailable,
-              over18,
+              currentUsers,
             };
             const result = onChange(modelFields);
             value = result?.author ?? value;
@@ -179,7 +357,7 @@ export default function BookInfoCreateForm(props) {
         hasError={errors.author?.hasError}
         {...getOverrideProps(overrides, "author")}
       ></TextField>
-      <TextAreaField
+      <TextField
         label="Description"
         isRequired={true}
         isReadOnly={false}
@@ -187,11 +365,12 @@ export default function BookInfoCreateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
+              over18,
               title,
               author,
               description: value,
               numberAvailable,
-              over18,
+              currentUsers,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -205,7 +384,7 @@ export default function BookInfoCreateForm(props) {
         errorMessage={errors.description?.errorMessage}
         hasError={errors.description?.hasError}
         {...getOverrideProps(overrides, "description")}
-      ></TextAreaField>
+      ></TextField>
       <TextField
         label="Number available"
         isRequired={true}
@@ -223,11 +402,12 @@ export default function BookInfoCreateForm(props) {
           }
           if (onChange) {
             const modelFields = {
+              over18,
               title,
               author,
               description,
               numberAvailable: value,
-              over18,
+              currentUsers,
             };
             const result = onChange(modelFields);
             value = result?.numberAvailable ?? value;
@@ -242,34 +422,53 @@ export default function BookInfoCreateForm(props) {
         hasError={errors.numberAvailable?.hasError}
         {...getOverrideProps(overrides, "numberAvailable")}
       ></TextField>
-      <SwitchField
-        label="Over18"
-        defaultChecked={false}
-        isDisabled={false}
-        isChecked={over18}
-        onChange={(e) => {
-          let value = e.target.checked;
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
           if (onChange) {
             const modelFields = {
+              over18,
               title,
               author,
               description,
               numberAvailable,
-              over18: value,
+              currentUsers: values,
             };
             const result = onChange(modelFields);
-            value = result?.over18 ?? value;
+            values = result?.currentUsers ?? values;
           }
-          if (errors.over18?.hasError) {
-            runValidationTasks("over18", value);
-          }
-          setOver18(value);
+          setCurrentUsers(values);
+          setCurrentCurrentUsersValue(undefined);
         }}
-        onBlur={() => runValidationTasks("over18", over18)}
-        errorMessage={errors.over18?.errorMessage}
-        hasError={errors.over18?.hasError}
-        {...getOverrideProps(overrides, "over18")}
-      ></SwitchField>
+        currentFieldValue={currentCurrentUsersValue}
+        label={"Current users"}
+        items={currentUsers}
+        hasError={errors.currentUsers?.hasError}
+        setFieldValue={setCurrentCurrentUsersValue}
+        inputFieldRef={currentUsersRef}
+        defaultFieldValue={undefined}
+      >
+        <TextField
+          label="Current users"
+          isRequired={true}
+          isReadOnly={false}
+          value={currentCurrentUsersValue}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.currentUsers?.hasError) {
+              runValidationTasks("currentUsers", value);
+            }
+            setCurrentCurrentUsersValue(value);
+          }}
+          onBlur={() =>
+            runValidationTasks("currentUsers", currentCurrentUsersValue)
+          }
+          errorMessage={errors.currentUsers?.errorMessage}
+          hasError={errors.currentUsers?.hasError}
+          ref={currentUsersRef}
+          {...getOverrideProps(overrides, "currentUsers")}
+        ></TextField>
+      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

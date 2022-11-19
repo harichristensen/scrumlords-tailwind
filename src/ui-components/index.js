@@ -5,7 +5,7 @@
  **************************************************************************/
 
 export { default as studioTheme } from "./studioTheme";
-export { default as BookInfoCreateForm } from "./BookInfoCreateForm";
-export { default as UserInfoCreateForm } from "./UserInfoCreateForm";
-export { default as UserInfoUpdateForm } from "./UserInfoUpdateForm";
-export { default as BookInfoUpdateForm } from "./BookInfoUpdateForm";
+export { default as BookCreateForm } from "./BookCreateForm";
+export { default as BookUpdateForm } from "./BookUpdateForm";
+export { default as UserCreateForm } from "./UserCreateForm";
+export { default as UserUpdateForm } from "./UserUpdateForm";

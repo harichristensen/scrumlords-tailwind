@@ -1,8 +1,9 @@
 
 import { createContext, useState, useEffect } from 'react';
-import { UserInfo, BookInfo } from './models';
+import { User, Book } from './models';
 import { Auth, DataStore, Hub } from 'aws-amplify';
 import { useRouter } from 'next/router';
+import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 
 
 
@@ -133,6 +134,74 @@ export const AppProvider = ({ children, hub }) => {
           author: newBookInfo.author,
           description: newBookInfo.description,
           numberAvailable: newBookInfo.numberAvailable,
+        })
+      );
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  // create user
+  const createUser = async (newUserInfo) => {
+    console.log(newUserInfo)
+    let newUser;
+    try {
+      newUser = await Auth.signUp({
+          username: newUserInfo.email,
+          password: newUserInfo.password,
+          attributes: {
+            age: newUserInfo.email,
+            firstName: newUserInfo.firstName,
+            lastName: newUserInfo.lastName,
+          },
+          autoSignIn: { // optional - enables auto sign in after user is confirmed
+              enabled: true,
+          }
+      });
+    } catch (error) {
+        console.log('error signing up:', error);
+    }
+
+
+    try {
+      await DataStore.save(
+        newUser = new User({
+          email: newUserInfo.email, firstName: newUserInfo.firstName, lastName: newUserInfo.lastName, currentBooks: [], fines: [], admin: newUserInfo.admin, accountId: newUser, age: newUserInfo.age
+        })
+      );
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  // delete user
+  const deleteUser = async (user) => {
+    const client = new CognitoIdentityProviderClient({ region: "REGION" });
+    console.log(newUserInfo)
+    let newUser;
+    try {
+      client.admin
+      newUser = await Auth.deleteUser({
+          username: newUserInfo.email,
+          password: newUserInfo.password,
+          attributes: {
+            age: newUserInfo.email,
+            firstName: newUserInfo.firstName,
+            lastName: newUserInfo.lastName,
+          },
+          autoSignIn: { // optional - enables auto sign in after user is confirmed
+              enabled: true,
+          }
+      });
+    } catch (error) {
+        console.log('error signing up:', error);
+    }
+
+
+    try {
+      await DataStore.save(
+        newUser = new User({
+          email: newUserInfo.email, firstName: newUserInfo.firstName, lastName: newUserInfo.lastName, currentBooks: [], fines: [], admin: newUserInfo.admin, accountId: newUser, age: newUserInfo.age
         })
       );
     } catch(e) {
