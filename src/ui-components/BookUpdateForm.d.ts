@@ -7,37 +7,34 @@
 import * as React from "react";
 import { Book } from "../models";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type BookUpdateFormInputValues = {
-    over18?: boolean;
     title?: string;
     author?: string;
     description?: string;
     numberAvailable?: number;
-    currentUsers?: string[];
+    over18?: boolean;
 };
 export declare type BookUpdateFormValidationValues = {
-    over18?: ValidationFunction<boolean>;
     title?: ValidationFunction<string>;
     author?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
     numberAvailable?: ValidationFunction<number>;
-    currentUsers?: ValidationFunction<string>;
+    over18?: ValidationFunction<boolean>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type BookUpdateFormOverridesProps = {
     BookUpdateFormGrid?: FormProps<GridProps>;
-    over18?: FormProps<SwitchFieldProps>;
     title?: FormProps<TextFieldProps>;
     author?: FormProps<TextFieldProps>;
-    description?: FormProps<TextFieldProps>;
+    description?: FormProps<TextAreaFieldProps>;
     numberAvailable?: FormProps<TextFieldProps>;
-    currentUsers?: FormProps<TextFieldProps>;
+    over18?: FormProps<SwitchFieldProps>;
 } & EscapeHatchProps;
 export declare type BookUpdateFormProps = React.PropsWithChildren<{
     overrides?: BookUpdateFormOverridesProps | undefined | null;

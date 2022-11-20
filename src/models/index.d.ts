@@ -12,12 +12,12 @@ type EagerBook = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly over18: boolean;
+  readonly currentUsers?: string[] | null;
   readonly title: string;
   readonly author: string;
   readonly description: string;
   readonly numberAvailable: number;
-  readonly currentUsers?: string[] | null;
+  readonly over18: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -28,12 +28,12 @@ type LazyBook = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly over18: boolean;
+  readonly currentUsers?: string[] | null;
   readonly title: string;
   readonly author: string;
   readonly description: string;
   readonly numberAvailable: number;
-  readonly currentUsers?: string[] | null;
+  readonly over18: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -50,14 +50,13 @@ type EagerUser = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly birthdate: string;
+  readonly username: string;
   readonly currentBooks?: string[] | null;
   readonly fines?: string[] | null;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly admin: string;
-  readonly age: number;
-  readonly accountId: string;
-  readonly email?: string | null;
+  readonly admin: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -68,14 +67,13 @@ type LazyUser = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly birthdate: string;
+  readonly username: string;
   readonly currentBooks?: string[] | null;
   readonly fines?: string[] | null;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly admin: string;
-  readonly age: number;
-  readonly accountId: string;
-  readonly email?: string | null;
+  readonly admin: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

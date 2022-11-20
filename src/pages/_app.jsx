@@ -1,7 +1,7 @@
 import 'focus-visible'
 import '@/styles/tailwind.css'
 import { Amplify, Auth, AuthModeStrategyType } from 'aws-amplify';
-import { withAuthenticator } from '@aws-amplify/ui-react';
+import { Authenticator, withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { AppProvider } from '@/AppContext';
 
@@ -12,16 +12,17 @@ import { useState } from 'react';
 Auth.configure(awsmobile);
 
 Amplify.configure({
-  ...awsmobile, ssr: true,
+  ...awsmobile,
   authModeStrategyType: AuthModeStrategyType.MULTI_AUTH
 });
 
-function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
   return (
       <AppProvider>
+        <Authenticator className='mt-60'>
         <Component {...pageProps} />
+        </Authenticator>
       </AppProvider>
   )
 }
 
-export default withAuthenticator(App)

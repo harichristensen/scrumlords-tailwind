@@ -6,43 +6,34 @@
 
 import * as React from "react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, PasswordFieldProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type UserCreateFormInputValues = {
-    currentBooks?: string[];
-    fines?: string[];
-    firstName?: string;
-    lastName?: string;
-    admin?: string;
-    age?: number;
-    accountId?: string;
+    name?: string;
+    Field0?: string;
     email?: string;
+    birthdate?: string;
+    admin?: boolean;
 };
 export declare type UserCreateFormValidationValues = {
-    currentBooks?: ValidationFunction<string>;
-    fines?: ValidationFunction<string>;
-    firstName?: ValidationFunction<string>;
-    lastName?: ValidationFunction<string>;
-    admin?: ValidationFunction<string>;
-    age?: ValidationFunction<number>;
-    accountId?: ValidationFunction<string>;
+    name?: ValidationFunction<string>;
+    Field0?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
+    birthdate?: ValidationFunction<string>;
+    admin?: ValidationFunction<boolean>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserCreateFormOverridesProps = {
     UserCreateFormGrid?: FormProps<GridProps>;
-    currentBooks?: FormProps<TextFieldProps>;
-    fines?: FormProps<TextAreaFieldProps>;
-    firstName?: FormProps<TextFieldProps>;
-    lastName?: FormProps<TextFieldProps>;
-    admin?: FormProps<TextFieldProps>;
-    age?: FormProps<TextFieldProps>;
-    accountId?: FormProps<TextFieldProps>;
+    name?: FormProps<TextFieldProps>;
+    Field0?: FormProps<PasswordFieldProps>;
     email?: FormProps<TextFieldProps>;
+    birthdate?: FormProps<TextFieldProps>;
+    admin?: FormProps<SwitchFieldProps>;
 } & EscapeHatchProps;
 export declare type UserCreateFormProps = React.PropsWithChildren<{
     overrides?: UserCreateFormOverridesProps | undefined | null;

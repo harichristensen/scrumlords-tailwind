@@ -33,7 +33,28 @@ export const AppProvider = ({ children, hub }) => {
 
   // authentication states
   useEffect(() => {
-      checkLogInState()
+    console.log(signUp)
+    if (signUp === true){
+      const createUser = async () => {
+        const curUser = await Auth.currentAuthenticatedUser()
+        console.log("hello")
+        try {
+          console.log(curUser)
+          await DataStore.save(
+            new User({
+              currentBooks: [], fines: [], admin: false, birthdate: curUser.attributes.birthdate, name: curUser.attributes.name, username: curUser.username, email: curUser.attributes.email
+            })
+          );
+        } catch(e) {
+          console.log(e)
+        }
+      }
+      createUser();
+      setShowAlert(true);
+      setSignUp(false)
+    }
+
+    checkLogInState()
     }, [signIn]);
   
   useEffect(() => {
@@ -42,38 +63,17 @@ export const AppProvider = ({ children, hub }) => {
     }
   }, [signOut]);
 
-  useEffect(() => {
-    console.log(signUp)
-    if (signUp === true){
-      const createUserInfo = async () => {
-        const curUser = Auth.currentAuthenticatedUser()
-        console.log("hello")
-        try {
-          console.log(curUser)
-          await DataStore.save(
-            newUser = new UserInfo({
-              currentBooks: [], fines: [], admin: false, age: curUser.age, firstName: curUser.name, lastName: curUser.family_name, accountId: curUser.id, email: curUser.username
-            })
-          );
-        } catch(e) {
-          console.log(e)
-        }
-      }
-      createUserInfo();
-      setShowAlert(true);
-    }
-  }, [signUp]);
-
 
   // update user
   useEffect(() => {
+    console.log(currentUser)
     console.log(signIn)
     if (signIn === true){
       loadBooks();
       loadUsers();
       
-      const bookSubscription = DataStore.observe(BookInfo).subscribe(() => {loadBooks()})
-      const userSubscription = DataStore.observe(UserInfo).subscribe(() => {loadUsers()})
+      const bookSubscription = DataStore.observe(Book).subscribe(() => {loadBooks()})
+      const userSubscription = DataStore.observe(User).subscribe(() => {loadUsers()})
 
       const unsub = () => {
         bookSubscription.unsubscribe();
@@ -86,26 +86,34 @@ export const AppProvider = ({ children, hub }) => {
   // update user list and book list
   useEffect(() => {
     if (booksNotParsed && booksNotParsed.length !== 0){
-      const parsedBooks = JSON.parse(JSON.stringify(booksNotParsed))
-      setBookList(parsedBooks)
+      // const parsedBooks = JSON.parse(JSON.stringify(booksNotParsed))
+      // setBookList(parsedBooks)
+      setBookList(booksNotParsed)
     }
   }, [booksNotParsed]);
 
   useEffect(() => {
     if (usersNotParsed && usersNotParsed.length !== 0){
-      const parsedUsers = JSON.parse(JSON.stringify(usersNotParsed))
-      setUserList(parsedUsers)
+      // const parsedUsers = JSON.parse(JSON.stringify(usersNotParsed))
+      // setUserList(parsedUsers)
+      usersNotParsed.localeCompare()
+      setUserList(usersNotParsed)
     }
   }, [usersNotParsed]);
 
   const loadBooks = async () => {
-    let bookList = await DataStore.query(BookInfo);
-    setBooksNotParsed(bookList)
+    let bookList = await DataStore.query(Book);
+    setBookList(bookList)
+
+    // setBooksNotParsed(bookList)
   }
 
   const loadUsers = async () => {
-    let userList = await DataStore.query(UserInfo);
-    setUsersNotParsed(userList)
+    let userList = await DataStore.query(User);
+    console.log(userList)
+    userList.map(user => user.username == currentUser.username ? setCurrentInfo(user) : null);
+    setUserList(userList)
+    // setUsersNotParsed(userList)
   }
 
 
@@ -114,28 +122,27 @@ export const AppProvider = ({ children, hub }) => {
     let curUser;
     try {
       curUser = await Auth.currentAuthenticatedUser()
-      if (curUser != currentUser) {
+      if (curUser) setSignIn(true);
+      if (curUser !== currentUser) {
+        console.log(curUser)
         setCurrentUser(curUser)
       }
     } catch (e) {
       console.log("error log in", e)
-      setCurrentUser(null)
     }
-    console.log(curUser)
+    console.log(currentUser)
   }
 
   // create book
-  const createBook = async (newBookInfo) => {
-    let newBook
-    
+  const createBook = async (newBook) => {
     try {
-      newBook = await DataStore.save(
-        new BookInfo({
-          title: newBookInfo.title,
-          over18: newBookInfo.ageRating,
-          author: newBookInfo.author,
-          description: newBookInfo.description,
-          numberAvailable: newBookInfo.numberAvailable,
+      await DataStore.save(
+        new Book({
+          title: newBook.title,
+          over18: newBook.ageRating,
+          author: newBook.author,
+          description: newBook.description,
+          numberAvailable: newBook.numberAvailable,
         })
       );
     } catch(e) {
@@ -144,17 +151,16 @@ export const AppProvider = ({ children, hub }) => {
   }
 
   // create user
-  const createUser = async (newUserInfo) => {
-    console.log(newUserInfo)
-    let newUser;
+  const createUser = async (newUser) => {
+    console.log(newUser)
+    let createdUser;
     try {
-      newUser = await Auth.signUp({
-          username: newUserInfo.email,
-          password: newUserInfo.password,
+      createdUser = await Auth.signUp({
+          password: newUser.password,
           attributes: {
-            age: newUserInfo.email,
-            firstName: newUserInfo.firstName,
-            lastName: newUserInfo.lastName,
+            birthdate: newUser.birthdate,
+            name: newUser.name,
+            email: newUser.email,
           },
           autoSignIn: { // optional - enables auto sign in after user is confirmed
               enabled: true,
@@ -168,7 +174,7 @@ export const AppProvider = ({ children, hub }) => {
     try {
       await DataStore.save(
         newUser = new User({
-          email: newUserInfo.email, firstName: newUserInfo.firstName, lastName: newUserInfo.lastName, currentBooks: [], fines: [], admin: newUserInfo.admin, accountId: newUser, age: newUserInfo.age
+          currentBooks: [], fines: [], admin: false, birthdate: newUser.birthdate, name: newUser.name, username: createdUser.username, email: newUser.email
         })
       );
     } catch(e) {
@@ -179,7 +185,7 @@ export const AppProvider = ({ children, hub }) => {
   // delete user
   const deleteUser = async (user) => {
     const client = new CognitoIdentityProviderClient({ region: "REGION" });
-    console.log(newUserInfo)
+    console.log(newUser)
     try {
       await client.adminDelete({
         UserPoolId: "us-west-2_bc4RN7HYt",
@@ -198,10 +204,16 @@ export const AppProvider = ({ children, hub }) => {
     }
   }
 
-  // set user as admin
   const setAdmin = async () => {
-
+    console.log(currentInfo)
+    let newInfo = await DataStore.save(
+      User.copyOf(currentInfo, updated => {
+        updated.admin = true;
+      })
+    );
+    setCurrentInfo(newInfo)
   }
+
 
   Hub.listen('auth', (data) => {     
     console.log('A new event has happened: ', data + ' has ' + data.payload.event);
@@ -223,7 +235,7 @@ export const AppProvider = ({ children, hub }) => {
   })
 
   return (
-    <AppContext.Provider value={{setAdmin, showAlert, setShowAlert, currentSelf, currentUser, userData, userList, bookList, adminSignUp, createBook, setAdminSignUp}}>
+    <AppContext.Provider value={{setAdmin, currentUser, createUser, deleteUser, showAlert, setShowAlert, currentInfo, currentUser, userData, userList, bookList, adminSignUp}}>
       {children}
     </AppContext.Provider>
   );

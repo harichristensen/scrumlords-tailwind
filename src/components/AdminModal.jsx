@@ -1,8 +1,10 @@
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useRef, useState, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { TextField } from '@aws-amplify/ui-react';
+import AppContext from "@/AppContext"
 
 export default function AdminModal({open, setOpen, setShowAlert}) {
+  const {setAdmin} = useContext(AppContext)
   const [code, setCode] = useState('');
   const [error, setError] = useState(false);
 

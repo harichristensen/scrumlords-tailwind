@@ -13,30 +13,27 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type BookCreateFormInputValues = {
-    over18?: boolean;
     title?: string;
     author?: string;
     description?: string;
     numberAvailable?: number;
-    currentUsers?: string[];
+    over18?: boolean;
 };
 export declare type BookCreateFormValidationValues = {
-    over18?: ValidationFunction<boolean>;
     title?: ValidationFunction<string>;
     author?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
     numberAvailable?: ValidationFunction<number>;
-    currentUsers?: ValidationFunction<string>;
+    over18?: ValidationFunction<boolean>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type BookCreateFormOverridesProps = {
     BookCreateFormGrid?: FormProps<GridProps>;
-    over18?: FormProps<SwitchFieldProps>;
     title?: FormProps<TextFieldProps>;
     author?: FormProps<TextFieldProps>;
     description?: FormProps<TextFieldProps>;
     numberAvailable?: FormProps<TextFieldProps>;
-    currentUsers?: FormProps<TextFieldProps>;
+    over18?: FormProps<SwitchFieldProps>;
 } & EscapeHatchProps;
 export declare type BookCreateFormProps = React.PropsWithChildren<{
     overrides?: BookCreateFormOverridesProps | undefined | null;

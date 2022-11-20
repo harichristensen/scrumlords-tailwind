@@ -7,43 +7,37 @@
 import * as React from "react";
 import { User } from "../models";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type UserUpdateFormInputValues = {
-    currentBooks?: string[];
-    fines?: string[];
-    firstName?: string;
-    lastName?: string;
-    admin?: string;
-    age?: number;
-    accountId?: string;
+    name?: string;
     email?: string;
+    currentBooks?: string[];
+    birthdate?: string;
+    admin?: boolean;
+    fines?: string[];
 };
 export declare type UserUpdateFormValidationValues = {
-    currentBooks?: ValidationFunction<string>;
-    fines?: ValidationFunction<string>;
-    firstName?: ValidationFunction<string>;
-    lastName?: ValidationFunction<string>;
-    admin?: ValidationFunction<string>;
-    age?: ValidationFunction<number>;
-    accountId?: ValidationFunction<string>;
+    name?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
+    currentBooks?: ValidationFunction<string>;
+    birthdate?: ValidationFunction<string>;
+    admin?: ValidationFunction<boolean>;
+    fines?: ValidationFunction<string>;
 };
 export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserUpdateFormOverridesProps = {
     UserUpdateFormGrid?: FormProps<GridProps>;
-    currentBooks?: FormProps<TextFieldProps>;
-    fines?: FormProps<TextAreaFieldProps>;
-    firstName?: FormProps<TextFieldProps>;
-    lastName?: FormProps<TextFieldProps>;
-    admin?: FormProps<TextFieldProps>;
-    age?: FormProps<TextFieldProps>;
-    accountId?: FormProps<TextFieldProps>;
+    name?: FormProps<TextFieldProps>;
     email?: FormProps<TextFieldProps>;
+    currentBooks?: FormProps<TextFieldProps>;
+    birthdate?: FormProps<TextFieldProps>;
+    admin?: FormProps<SwitchFieldProps>;
+    fines?: FormProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type UserUpdateFormProps = React.PropsWithChildren<{
     overrides?: UserUpdateFormOverridesProps | undefined | null;

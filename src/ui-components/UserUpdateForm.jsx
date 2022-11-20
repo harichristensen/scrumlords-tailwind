@@ -17,6 +17,7 @@ import {
   Grid,
   Icon,
   ScrollView,
+  SwitchField,
   Text,
   TextAreaField,
   TextField,
@@ -168,40 +169,34 @@ export default function UserUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    currentBooks: [],
-    fines: [],
-    firstName: undefined,
-    lastName: undefined,
-    admin: undefined,
-    age: undefined,
-    accountId: undefined,
+    name: undefined,
     email: undefined,
+    currentBooks: [],
+    birthdate: undefined,
+    admin: false,
+    fines: [],
   };
+  const [name, setName] = React.useState(initialValues.name);
+  const [email, setEmail] = React.useState(initialValues.email);
   const [currentBooks, setCurrentBooks] = React.useState(
     initialValues.currentBooks
   );
+  const [birthdate, setBirthdate] = React.useState(initialValues.birthdate);
+  const [admin, setAdmin] = React.useState(initialValues.admin);
   const [fines, setFines] = React.useState(
     initialValues.fines ? JSON.stringify(initialValues.fines) : undefined
   );
-  const [firstName, setFirstName] = React.useState(initialValues.firstName);
-  const [lastName, setLastName] = React.useState(initialValues.lastName);
-  const [admin, setAdmin] = React.useState(initialValues.admin);
-  const [age, setAge] = React.useState(initialValues.age);
-  const [accountId, setAccountId] = React.useState(initialValues.accountId);
-  const [email, setEmail] = React.useState(initialValues.email);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = { ...initialValues, ...userRecord };
+    setName(cleanValues.name);
+    setEmail(cleanValues.email);
     setCurrentBooks(cleanValues.currentBooks ?? []);
     setCurrentCurrentBooksValue(undefined);
+    setBirthdate(cleanValues.birthdate);
+    setAdmin(cleanValues.admin);
     setFines(cleanValues.fines ?? []);
     setCurrentFinesValue(undefined);
-    setFirstName(cleanValues.firstName);
-    setLastName(cleanValues.lastName);
-    setAdmin(cleanValues.admin);
-    setAge(cleanValues.age);
-    setAccountId(cleanValues.accountId);
-    setEmail(cleanValues.email);
     setErrors({});
   };
   const [userRecord, setUserRecord] = React.useState(user);
@@ -219,14 +214,12 @@ export default function UserUpdateForm(props) {
   const [currentFinesValue, setCurrentFinesValue] = React.useState(undefined);
   const finesRef = React.createRef();
   const validations = {
+    name: [{ type: "Required" }],
+    email: [{ type: "Required" }],
     currentBooks: [{ type: "Required" }],
-    fines: [{ type: "Required" }, { type: "JSON" }],
-    firstName: [{ type: "Required" }],
-    lastName: [{ type: "Required" }],
+    birthdate: [{ type: "Required" }],
     admin: [{ type: "Required" }],
-    age: [{ type: "Required" }],
-    accountId: [{ type: "Required" }],
-    email: [],
+    fines: [{ type: "Required" }, { type: "JSON" }],
   };
   const runValidationTasks = async (fieldName, value) => {
     let validationResponse = validateField(value, validations[fieldName]);
@@ -246,14 +239,12 @@ export default function UserUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          currentBooks,
-          fines,
-          firstName,
-          lastName,
-          admin,
-          age,
-          accountId,
+          name,
           email,
+          currentBooks,
+          birthdate,
+          admin,
+          fines,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -296,19 +287,75 @@ export default function UserUpdateForm(props) {
       {...rest}
       {...getOverrideProps(overrides, "UserUpdateForm")}
     >
+      <TextField
+        label="Name"
+        isRequired={true}
+        isReadOnly={false}
+        defaultValue={name}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name: value,
+              email,
+              currentBooks,
+              birthdate,
+              admin,
+              fines,
+            };
+            const result = onChange(modelFields);
+            value = result?.name ?? value;
+          }
+          if (errors.name?.hasError) {
+            runValidationTasks("name", value);
+          }
+          setName(value);
+        }}
+        onBlur={() => runValidationTasks("name", name)}
+        errorMessage={errors.name?.errorMessage}
+        hasError={errors.name?.hasError}
+        {...getOverrideProps(overrides, "name")}
+      ></TextField>
+      <TextField
+        label="Email"
+        isRequired={true}
+        isReadOnly={false}
+        defaultValue={email}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email: value,
+              currentBooks,
+              birthdate,
+              admin,
+              fines,
+            };
+            const result = onChange(modelFields);
+            value = result?.email ?? value;
+          }
+          if (errors.email?.hasError) {
+            runValidationTasks("email", value);
+          }
+          setEmail(value);
+        }}
+        onBlur={() => runValidationTasks("email", email)}
+        errorMessage={errors.email?.errorMessage}
+        hasError={errors.email?.hasError}
+        {...getOverrideProps(overrides, "email")}
+      ></TextField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
           if (onChange) {
             const modelFields = {
-              currentBooks: values,
-              fines,
-              firstName,
-              lastName,
-              admin,
-              age,
-              accountId,
+              name,
               email,
+              currentBooks: values,
+              birthdate,
+              admin,
+              fines,
             };
             const result = onChange(modelFields);
             values = result?.currentBooks ?? values;
@@ -328,6 +375,7 @@ export default function UserUpdateForm(props) {
           label="Current books"
           isRequired={true}
           isReadOnly={false}
+          placeholder="book title"
           value={currentCurrentBooksValue}
           onChange={(e) => {
             let { value } = e.target;
@@ -345,19 +393,76 @@ export default function UserUpdateForm(props) {
           {...getOverrideProps(overrides, "currentBooks")}
         ></TextField>
       </ArrayField>
+      <TextField
+        label="Birthdate"
+        isRequired={true}
+        isReadOnly={false}
+        type="date"
+        defaultValue={birthdate}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              currentBooks,
+              birthdate: value,
+              admin,
+              fines,
+            };
+            const result = onChange(modelFields);
+            value = result?.birthdate ?? value;
+          }
+          if (errors.birthdate?.hasError) {
+            runValidationTasks("birthdate", value);
+          }
+          setBirthdate(value);
+        }}
+        onBlur={() => runValidationTasks("birthdate", birthdate)}
+        errorMessage={errors.birthdate?.errorMessage}
+        hasError={errors.birthdate?.hasError}
+        {...getOverrideProps(overrides, "birthdate")}
+      ></TextField>
+      <SwitchField
+        label="Admin"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={admin}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              name,
+              email,
+              currentBooks,
+              birthdate,
+              admin: value,
+              fines,
+            };
+            const result = onChange(modelFields);
+            value = result?.admin ?? value;
+          }
+          if (errors.admin?.hasError) {
+            runValidationTasks("admin", value);
+          }
+          setAdmin(value);
+        }}
+        onBlur={() => runValidationTasks("admin", admin)}
+        errorMessage={errors.admin?.errorMessage}
+        hasError={errors.admin?.hasError}
+        {...getOverrideProps(overrides, "admin")}
+      ></SwitchField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
           if (onChange) {
             const modelFields = {
-              currentBooks,
-              fines: values,
-              firstName,
-              lastName,
-              admin,
-              age,
-              accountId,
+              name,
               email,
+              currentBooks,
+              birthdate,
+              admin,
+              fines: values,
             };
             const result = onChange(modelFields);
             values = result?.fines ?? values;
@@ -377,6 +482,7 @@ export default function UserUpdateForm(props) {
           label="Fines"
           isRequired={true}
           isReadOnly={false}
+          placeholder='{reason: "late fee", amount: "$5"}'
           value={currentFinesValue}
           onChange={(e) => {
             let { value } = e.target;
@@ -392,201 +498,6 @@ export default function UserUpdateForm(props) {
           {...getOverrideProps(overrides, "fines")}
         ></TextAreaField>
       </ArrayField>
-      <TextField
-        label="First name"
-        isRequired={true}
-        isReadOnly={false}
-        defaultValue={firstName}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName: value,
-              lastName,
-              admin,
-              age,
-              accountId,
-              email,
-            };
-            const result = onChange(modelFields);
-            value = result?.firstName ?? value;
-          }
-          if (errors.firstName?.hasError) {
-            runValidationTasks("firstName", value);
-          }
-          setFirstName(value);
-        }}
-        onBlur={() => runValidationTasks("firstName", firstName)}
-        errorMessage={errors.firstName?.errorMessage}
-        hasError={errors.firstName?.hasError}
-        {...getOverrideProps(overrides, "firstName")}
-      ></TextField>
-      <TextField
-        label="Last name"
-        isRequired={true}
-        isReadOnly={false}
-        defaultValue={lastName}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName,
-              lastName: value,
-              admin,
-              age,
-              accountId,
-              email,
-            };
-            const result = onChange(modelFields);
-            value = result?.lastName ?? value;
-          }
-          if (errors.lastName?.hasError) {
-            runValidationTasks("lastName", value);
-          }
-          setLastName(value);
-        }}
-        onBlur={() => runValidationTasks("lastName", lastName)}
-        errorMessage={errors.lastName?.errorMessage}
-        hasError={errors.lastName?.hasError}
-        {...getOverrideProps(overrides, "lastName")}
-      ></TextField>
-      <TextField
-        label="Admin"
-        isRequired={true}
-        isReadOnly={false}
-        defaultValue={admin}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName,
-              lastName,
-              admin: value,
-              age,
-              accountId,
-              email,
-            };
-            const result = onChange(modelFields);
-            value = result?.admin ?? value;
-          }
-          if (errors.admin?.hasError) {
-            runValidationTasks("admin", value);
-          }
-          setAdmin(value);
-        }}
-        onBlur={() => runValidationTasks("admin", admin)}
-        errorMessage={errors.admin?.errorMessage}
-        hasError={errors.admin?.hasError}
-        {...getOverrideProps(overrides, "admin")}
-      ></TextField>
-      <TextField
-        label="Age"
-        isRequired={true}
-        isReadOnly={false}
-        type="number"
-        step="any"
-        defaultValue={age}
-        onChange={(e) => {
-          let value = parseInt(e.target.value);
-          if (isNaN(value)) {
-            setErrors((errors) => ({
-              ...errors,
-              age: "Value must be a valid number",
-            }));
-            return;
-          }
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName,
-              lastName,
-              admin,
-              age: value,
-              accountId,
-              email,
-            };
-            const result = onChange(modelFields);
-            value = result?.age ?? value;
-          }
-          if (errors.age?.hasError) {
-            runValidationTasks("age", value);
-          }
-          setAge(value);
-        }}
-        onBlur={() => runValidationTasks("age", age)}
-        errorMessage={errors.age?.errorMessage}
-        hasError={errors.age?.hasError}
-        {...getOverrideProps(overrides, "age")}
-      ></TextField>
-      <TextField
-        label="Account id"
-        isRequired={true}
-        isReadOnly={false}
-        defaultValue={accountId}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName,
-              lastName,
-              admin,
-              age,
-              accountId: value,
-              email,
-            };
-            const result = onChange(modelFields);
-            value = result?.accountId ?? value;
-          }
-          if (errors.accountId?.hasError) {
-            runValidationTasks("accountId", value);
-          }
-          setAccountId(value);
-        }}
-        onBlur={() => runValidationTasks("accountId", accountId)}
-        errorMessage={errors.accountId?.errorMessage}
-        hasError={errors.accountId?.hasError}
-        {...getOverrideProps(overrides, "accountId")}
-      ></TextField>
-      <TextField
-        label="Email"
-        isRequired={false}
-        isReadOnly={false}
-        defaultValue={email}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              currentBooks,
-              fines,
-              firstName,
-              lastName,
-              admin,
-              age,
-              accountId,
-              email: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.email ?? value;
-          }
-          if (errors.email?.hasError) {
-            runValidationTasks("email", value);
-          }
-          setEmail(value);
-        }}
-        onBlur={() => runValidationTasks("email", email)}
-        errorMessage={errors.email?.errorMessage}
-        hasError={errors.email?.hasError}
-        {...getOverrideProps(overrides, "email")}
-      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

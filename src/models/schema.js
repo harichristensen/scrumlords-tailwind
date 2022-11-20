@@ -10,12 +10,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "over18": {
-                    "name": "over18",
-                    "isArray": false,
-                    "type": "Boolean",
+                "currentUsers": {
+                    "name": "currentUsers",
+                    "isArray": true,
+                    "type": "String",
                     "isRequired": true,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true
                 },
                 "title": {
                     "name": "title",
@@ -45,13 +46,12 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "currentUsers": {
-                    "name": "currentUsers",
-                    "isArray": true,
-                    "type": "String",
+                "over18": {
+                    "name": "over18",
+                    "isArray": false,
+                    "type": "Boolean",
                     "isRequired": true,
-                    "attributes": [],
-                    "isArrayNullable": true
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -105,6 +105,34 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "email": {
+                    "name": "email",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "birthdate": {
+                    "name": "birthdate",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "username": {
+                    "name": "username",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "currentBooks": {
                     "name": "currentBooks",
                     "isArray": true,
@@ -121,46 +149,11 @@ export const schema = {
                     "attributes": [],
                     "isArrayNullable": true
                 },
-                "firstName": {
-                    "name": "firstName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "lastName": {
-                    "name": "lastName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "admin": {
                     "name": "admin",
                     "isArray": false,
-                    "type": "String",
+                    "type": "Boolean",
                     "isRequired": true,
-                    "attributes": []
-                },
-                "age": {
-                    "name": "age",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "accountId": {
-                    "name": "accountId",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "email": {
-                    "name": "email",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -209,5 +202,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "e05d2873f9bb5305580c876508f4830c"
+    "version": "d411811ccb69594009275edeb8e979f9"
 };

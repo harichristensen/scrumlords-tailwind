@@ -46,8 +46,8 @@ function MobileNavIcon({ open }) {
 }
 
 function MobileNavigation() {
-const {showAlert, setShowAlert, setAdmin} = useContext(AppContext)
-return (
+  const {currentInfo} = useContext(AppContext)
+  return (
     <Popover>
       <Popover.Button
         className="relative z-10 flex h-8 w-8 items-center justify-center [&:not(:focus-visible)]:focus:outline-none"
@@ -80,11 +80,12 @@ return (
             as="div"
             className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
-            <MobileNavLink href="#features">Features</MobileNavLink>
-            <MobileNavLink href="#testimonials">Testimonials</MobileNavLink>
-            <MobileNavLink href="#pricing">Pricing</MobileNavLink>
+            <MobileNavLink href="#books">Books</MobileNavLink>
+            {currentInfo.admin ? <MobileNavLink href="#users">Users</MobileNavLink>:null}
+            <MobileNavLink href="#acccount">Account</MobileNavLink>
             <hr className="m-2 border-slate-300/40" />
-            <MobileNavLink href="/login">Sign in</MobileNavLink>
+            {Auth.currentAuthenticatedUser ? <MobileNavLink href="/login">Sign in</MobileNavLink>:<MobileNavLink onClick={()=>Auth.signOut()}>Sign Out</MobileNavLink>}
+            
           </Popover.Panel>
         </Transition.Child>
       </Transition.Root>
@@ -93,32 +94,34 @@ return (
 }
 
 export function Header() {
-const {showAlert, setShowAlert, setAdmin} = useContext(AppContext)
+const {currentInfo} = useContext(AppContext)
 return (
-    <header className="py-10">
-      <Container>
-        <nav className="relative z-50 flex justify-between">
+    <header className="py-10 bg-slate-700 text-gray-300">
+      <Container >
+        <nav className="flex z-50 justify-between">
           <div className="flex items-center md:gap-x-12">
+          <h2 className="text-2xl font-bold sm:truncate">
             <Link href="#" aria-label="Home">
-              <Logo className="h-10 w-auto" />
+              <>Library Management System</>
             </Link>
-            <div className="hidden md:flex md:gap-x-6">
-              <NavLink href="#features">Features</NavLink>
-              <NavLink href="#testimonials">Testimonials</NavLink>
-              <NavLink href="#pricing">Pricing</NavLink>
+          </h2>
+            <div className="hidden text-2xl md:flex md:gap-x-6">
+              <Link href="/books">Books</Link>
+              {currentInfo.admin ? <Link href="users">Users</Link>:null}
+              <Link href="/acccount">Account</Link>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
           {Auth.currentAuthenticatedUser ? 
           (
-            <div className="hidden md:block">
+            <div className="hidden md:block text-2xl">
               <button onClick={()=>Auth.signOut()}>Sign Out</button>
             </div>
           )
           : (
             <>
             <div className="hidden md:block">
-              <NavLink href="/login">Sign in</NavLink>
+              <Link href="/login">Sign in</Link>
             </div>
             <Button href="/register" color="blue">
               <span>

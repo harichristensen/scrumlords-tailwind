@@ -3,12 +3,10 @@ import AppContext from "@/AppContext"
 import { Dialog, Transition } from '@headlessui/react'
 
 import { 
-  BookInfoUpdateForm 
-} from './ui-components';
+  BookUpdateForm 
+} from '../ui-components';
 
 const EditBook = ({book}) => {
-    const {updateBook} = useContext(AppContext)
-
     const cancelButtonRef = useRef(null)
 
     const [open, setOpen] = useState(false)
@@ -16,7 +14,6 @@ const EditBook = ({book}) => {
       
     return (
         <>
-        <button className="modal-button w-full px-2 text-right text-red-600 dark:text-white" onClick={(() => setOpen(true))}>Edit</button>
             <Transition.Root show={open} as={Fragment}>
             <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
                 <Transition.Child
@@ -28,8 +25,8 @@ const EditBook = ({book}) => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 >
-                <BookInfoUpdateForm
-                  BookInfo={book}
+                <BookUpdateForm
+                  Book={book}
                   onSuccess={() => setOpen(false)}
                   onClose={() => setOpen(false)}
                 />

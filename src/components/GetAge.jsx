@@ -1,4 +1,4 @@
-export default function GetAge(birthdate) {
+export default function GetAge({birthdate}) {
   let now = new Date();
 
   let currentDate = [
@@ -8,5 +8,6 @@ export default function GetAge(birthdate) {
   ].join('');
 
   let pastDate = birthdate.replace('-','');
+  pastDate = pastDate.replace('-','');
   return(Math.floor( ( currentDate - pastDate ) * 0.0001 ));
 }
