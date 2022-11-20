@@ -5,46 +5,66 @@ import { MagnifyingGlassIcon, TrashIcon, ClipboardDocumentIcon } from "@heroicon
 import { TextField } from "@aws-amplify/ui-react"
 import EditUser from "./EditUser"
 import GetAge from "@/components/GetAge"
+import DeleteAlert from "./DeleteAlert"
 
 
 export default function UserRows() {
-    const {userList, deleteUser} = useContext(AppContext)
+    const {userList, deleteUser, updateUser, currentUser} = useContext(AppContext)
     
     const [editUser, setEditUser] = useState('')
     const [searchString, setSearchString] = useState('')
     const [open, setOpen] = useState(false)
-    const [newUserList, setNewUserList] = useState(userList)
-    
+    const [filteredList, setFilteredList] = useState(userList)
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false)
+
+
+
+    // opens edit modal
+    const handleEditUser = (user) => {
+      setEditUser(user)
+      setOpen(true)
+    }
+
+    // checks if user is trying to delete themselves
+    const handleDelete = (user) => {
+      if (user.username == currentUser.username) {
+        setShowDeleteAlert(true)
+        return;
+      }
+      deleteUser(user)
+    }
+
 
     useEffect(() => {
-      console.log(open)
-      if (editUser){
-        setOpen(true)
+      if (searchString) {
+        setFilteredList(userList.filter((o) => o.name.toLowerCase().includes(searchString.toLowerCase()) || o.email.toLowerCase().includes(searchString.toLowerCase())))
+      } else {
+        setFilteredList(userList)
       }
-    }, [editUser])
+    }, [searchString, userList])
 
-    const handleSearchString = (e) => {
-      e.preventDefault()
-      setNewUserList(userList.filter((o) =>o.name.toLowerCase().includes(searchString.toLowerCase())))
-      setSearchString(e.target.value)
-    }
+
+
+    console.log(userList)
     
     return(
       <>
-      
-      {setOpen ? <EditUser user={editUser}/> : null}
+      {showDeleteAlert ? <DeleteAlert handleClick={setShowDeleteAlert}/> : null}
+
+      <EditUser open={open} setOpen={setOpen} user={editUser} updateUser={updateUser}/>
+
       <TextField
             
-            placeholder="Search user"
+            placeholder="Search user by name or email"
             variant="outlined"
             value={searchString}
-            onChange={(e) => handleSearchString(e)}
+            onChange={(e) => setSearchString(e.target.value)}
           />
           <div className="p-4"></div>
       <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
-        {console.log(newUserList)}
-      {newUserList.map((user) =>
+      {filteredList.map((user) =>
         <li key={user.email} className=" col-span-1 divide-y divide-gray-300 border rounded-lg bg-white shadow">
+            {console.log(filteredList)}
             <div className="flex w-full items-center justify-between space-x-6 p-6">
               <div className="flex-1 truncate">
                 <div className="flex items-center space-x-3">
@@ -66,7 +86,7 @@ export default function UserRows() {
               <div className="-mt-px flex divide-x divide-gray-200">
                 <div className="flex w-0 flex-1">
                   <button
-                    onClick={() => setEditUser(user)}
+                    onClick={() => handleEditUser(user)}
                     className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:bg-gray-500"
                   >
                     <ClipboardDocumentIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -75,7 +95,7 @@ export default function UserRows() {
                 </div>
                 <div className="-ml-px flex w-0 flex-1">
                   <button
-                    onClick={()=>deleteUser(user)}
+                    onClick={()=>handleDelete(user)}
                     className="relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:bg-gray-500"
                   >
                     <TrashIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />

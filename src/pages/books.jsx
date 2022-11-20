@@ -1,11 +1,10 @@
-import UserRows from "@/components/UserRows"
-import AppContext from "../AppContext"
+import AppContext from "@/AppContext"
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Footer } from "@/components/Footer";
 import { Header } from '@/components/Header'
 import Head from 'next/head'
-import BookRows from "@/components/BookRows";
+import BookRows from "@/components/book/BookRows";
 
 
 export default function Books() {
@@ -29,13 +28,7 @@ export default function Books() {
 
             </div>
             {setOpen ? <EditUser user={editUser}/> : null}
-            <TextField
-                  
-                  placeholder="Search user"
-                  variant="outlined"
-                  value={searchString}
-                  onChange={(e) => handleSearchString(e)}
-                />
+            
               <BookRows />
         </div>
         <Footer />

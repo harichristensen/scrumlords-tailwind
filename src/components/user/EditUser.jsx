@@ -1,17 +1,17 @@
-import { useState, useContext, Fragment, useRef } from "react"
-import AppContext from "@/AppContext"
+import {  Fragment, useRef } from "react"
 import { Dialog, Transition } from '@headlessui/react'
 
 import { 
   UserUpdateForm 
 } from '@/ui-components';
 
-const EditUser = ({user}) => {
+const EditUser = ({open, setOpen, user, updateUser}) => {
     const cancelButtonRef = useRef(null)
-
-    const [open, setOpen] = useState(true)
     
-      console.log(user)
+    const handleSubmit = (fields) => {
+      updateUser(user, fields)
+      setOpen(false)
+    }
       if (user){
     return (
         <>
@@ -49,9 +49,9 @@ const EditUser = ({user}) => {
                         </Dialog.Title>
                         <div className="mt-2 text-left">
                         <UserUpdateForm
-                          User={user}
-                          onSuccess={() => setOpen(false)}
+                          user={user}
                           onCancel={() => setOpen(false)}
+                          onSubmit={(fields)=>{handleSubmit(fields)}}
                         />
                         </div>
                       </div>

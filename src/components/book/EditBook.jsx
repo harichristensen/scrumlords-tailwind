@@ -26,7 +26,7 @@ const EditBook = ({book}) => {
                 leaveTo="opacity-0"
                 >
                 <BookUpdateForm
-                  Book={book}
+                  book={book}
                   onSuccess={() => setOpen(false)}
                   onClose={() => setOpen(false)}
                 />
