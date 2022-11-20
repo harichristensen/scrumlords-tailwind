@@ -183,9 +183,7 @@ export default function UserUpdateForm(props) {
   );
   const [birthdate, setBirthdate] = React.useState(initialValues.birthdate);
   const [admin, setAdmin] = React.useState(initialValues.admin);
-  const [fines, setFines] = React.useState(
-    initialValues.fines ? JSON.stringify(initialValues.fines) : undefined
-  );
+  const [fines, setFines] = React.useState(initialValues.fines);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = { ...initialValues, ...userRecord };

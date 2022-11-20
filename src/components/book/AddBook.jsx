@@ -3,7 +3,7 @@ import AppContext from "@/AppContext"
 import { Dialog, Transition } from '@headlessui/react'
 import { 
   BookCreateForm 
-} from '../ui-components';
+} from '@/ui-components';
 
 const AddBook = () => {
     const [open, setOpen] = useState(false)

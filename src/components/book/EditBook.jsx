@@ -3,16 +3,15 @@ import AppContext from "@/AppContext"
 import { Dialog, Transition } from '@headlessui/react'
 
 import { 
-  UserUpdateForm 
-} from '../ui-components';
+  BookUpdateForm 
+} from '@/ui-components';
 
-const EditUser = ({user}) => {
+const EditBook = ({book}) => {
     const cancelButtonRef = useRef(null)
 
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     
-      console.log(user)
-      if (user){
+      
     return (
         <>
             <Transition.Root show={open} as={Fragment}>
@@ -26,9 +25,8 @@ const EditUser = ({user}) => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 >
-                  {console.log(user.fines)}
-                <UserUpdateForm
-                  User={user}
+                <BookUpdateForm
+                  Book={book}
                   onSuccess={() => setOpen(false)}
                   onClose={() => setOpen(false)}
                 />
@@ -37,8 +35,7 @@ const EditUser = ({user}) => {
             </Transition.Root>
                 
       </>
-    )}
-    return null
+    )
 }
 
-export default EditUser
+export default EditBook

@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 
 import { 
   UserCreateForm 
-} from '../ui-components';
+} from '@/ui-components';
 
 const AddUser = () => {
     const {createUser} = useContext(AppContext)
@@ -55,7 +55,7 @@ const AddUser = () => {
                         <div className="mt-2 text-left">
                         <UserCreateForm
                           onSubmit={fields => handleSubmit(fields)}
-                          onClose={() => setOpen(false)}
+                          onCancel={() => setOpen(false)}
                         />
                         </div>
                       </div>

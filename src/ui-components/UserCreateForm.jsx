@@ -32,20 +32,20 @@ export default function UserCreateForm(props) {
   } = props;
   const initialValues = {
     name: undefined,
-    Field0: undefined,
+    password: undefined,
     email: undefined,
     birthdate: undefined,
     admin: false,
   };
   const [name, setName] = React.useState(initialValues.name);
-  const [Field0, setField0] = React.useState(initialValues.Field0);
+  const [password, setPassword] = React.useState(initialValues.password);
   const [email, setEmail] = React.useState(initialValues.email);
   const [birthdate, setBirthdate] = React.useState(initialValues.birthdate);
   const [admin, setAdmin] = React.useState(initialValues.admin);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setName(initialValues.name);
-    setField0(initialValues.Field0);
+    setPassword(initialValues.password);
     setEmail(initialValues.email);
     setBirthdate(initialValues.birthdate);
     setAdmin(initialValues.admin);
@@ -53,7 +53,7 @@ export default function UserCreateForm(props) {
   };
   const validations = {
     name: [{ type: "Required" }],
-    Field0: [],
+    password: [],
     email: [{ type: "Required" }],
     birthdate: [{ type: "Required" }],
     admin: [{ type: "Required" }],
@@ -77,7 +77,7 @@ export default function UserCreateForm(props) {
         event.preventDefault();
         let modelFields = {
           name,
-          Field0,
+          password,
           email,
           birthdate,
           admin,
@@ -130,7 +130,7 @@ export default function UserCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name: value,
-              Field0,
+              password,
               email,
               birthdate,
               admin,
@@ -155,23 +155,23 @@ export default function UserCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              Field0: value,
+              password: value,
               email,
               birthdate,
               admin,
             };
             const result = onChange(modelFields);
-            value = result?.Field0 ?? value;
+            value = result?.password ?? value;
           }
-          if (errors.Field0?.hasError) {
-            runValidationTasks("Field0", value);
+          if (errors.password?.hasError) {
+            runValidationTasks("password", value);
           }
-          setField0(value);
+          setPassword(value);
         }}
-        onBlur={() => runValidationTasks("Field0", Field0)}
-        errorMessage={errors.Field0?.errorMessage}
-        hasError={errors.Field0?.hasError}
-        {...getOverrideProps(overrides, "Field0")}
+        onBlur={() => runValidationTasks("password", password)}
+        errorMessage={errors.password?.errorMessage}
+        hasError={errors.password?.hasError}
+        {...getOverrideProps(overrides, "password")}
       ></PasswordField>
       <TextField
         label="Email"
@@ -182,7 +182,7 @@ export default function UserCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              Field0,
+              password,
               email: value,
               birthdate,
               admin,
@@ -210,7 +210,7 @@ export default function UserCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              Field0,
+              password,
               email,
               birthdate: value,
               admin,
@@ -238,7 +238,7 @@ export default function UserCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              Field0,
+              password,
               email,
               birthdate,
               admin: value,

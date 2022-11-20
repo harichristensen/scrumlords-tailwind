@@ -4,7 +4,7 @@ import AddUser from "./AddUser"
 import { MagnifyingGlassIcon, TrashIcon, ClipboardDocumentIcon } from "@heroicons/react/20/solid"
 import { TextField } from "@aws-amplify/ui-react"
 import EditUser from "./EditUser"
-import GetAge from "./GetAge"
+import GetAge from "@/components/GetAge"
 
 
 export default function UserRows() {
@@ -49,9 +49,13 @@ export default function UserRows() {
               <div className="flex-1 truncate">
                 <div className="flex items-center space-x-3">
                   <h3 className="truncate text-sm font-medium text-gray-900">{user.name}</h3>
-                  <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                    {user.admin ? "Admin" : "User"}
-                  </span>
+                  {user.admin ?
+                    <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                     Admin 
+                    </span>
+                  : <span className="inline-block flex-shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                    User 
+                    </span>}
                 </div>
                 <p className="mt-1 truncate text-sm text-gray-500">{user.email}</p>
                 {user.fines.map(fine => <p className="mt-1 truncate text-sm text-gray-500">{fine.reason} {fine.amount}</p>)}
@@ -61,7 +65,6 @@ export default function UserRows() {
             <div>
               <div className="-mt-px flex divide-x divide-gray-200">
                 <div className="flex w-0 flex-1">
-        {console.log(user)}
                   <button
                     onClick={() => setEditUser(user)}
                     className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:bg-gray-500"

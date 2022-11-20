@@ -4,6 +4,7 @@ import { User, Book } from './models';
 import { Auth, DataStore, Hub } from 'aws-amplify';
 import { useRouter } from 'next/router';
 import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -19,6 +20,7 @@ export const AppProvider = ({ children, hub }) => {
   const [userList, setUserList] = useState([]);
   const [bookList, setBookList] = useState([]);
   const [signUp, setSignUp] = useState('');
+  const [createdSignUp, setCreatedSignUp] = useState('');
   const [signIn, setSignIn] = useState('');
   const [notParsed, setNotParsed] = useState('');
   const [usersNotParsed, setUsersNotParsed] = useState('');
@@ -28,13 +30,15 @@ export const AppProvider = ({ children, hub }) => {
   const [adminSignUp, setAdminSignUp] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
   const [createUserValue, setCreateUserValue] = useState("");
+  let bookSub;
+  let userSub;
 
   const router = useRouter()
 
   // authentication states
   useEffect(() => {
-    console.log(signUp)
-    if (signUp === true){
+    console.log(createdSignUp)
+    if (signUp === true && !createdSignUp){
       const createUser = async () => {
         const curUser = await Auth.currentAuthenticatedUser()
         console.log("hello")
@@ -53,7 +57,7 @@ export const AppProvider = ({ children, hub }) => {
       setShowAlert(true);
       setSignUp(false)
     }
-
+    setCreatedSignUp(false)
     checkLogInState()
     }, [signIn]);
   
@@ -72,14 +76,10 @@ export const AppProvider = ({ children, hub }) => {
       loadBooks();
       loadUsers();
       
-      const bookSubscription = DataStore.observe(Book).subscribe(() => {loadBooks()})
-      const userSubscription = DataStore.observe(User).subscribe(() => {loadUsers()})
+      bookSub = DataStore.observe(Book).subscribe(() => {loadBooks()})
+      userSub = DataStore.observe(User).subscribe(() => {loadUsers()})
 
-      const unsub = () => {
-        bookSubscription.unsubscribe();
-        userSubscription.unsubscribe();
-      }
-      return () => unsub()
+      return
     }
   }, [currentUser]);
 
@@ -152,34 +152,37 @@ export const AppProvider = ({ children, hub }) => {
 
   // create user
   const createUser = async (newUser) => {
+    setCreatedSignUp(true)
     console.log(newUser)
     let createdUser;
     try {
       createdUser = await Auth.signUp({
+          username: newUser.email,
           password: newUser.password,
           attributes: {
             birthdate: newUser.birthdate,
             name: newUser.name,
             email: newUser.email,
           },
-          autoSignIn: { // optional - enables auto sign in after user is confirmed
-              enabled: true,
-          }
       });
     } catch (error) {
         console.log('error signing up:', error);
     }
 
+    console.log(createdUser)
+
 
     try {
       await DataStore.save(
         newUser = new User({
-          currentBooks: [], fines: [], admin: false, birthdate: newUser.birthdate, name: newUser.name, username: createdUser.username, email: newUser.email
+          currentBooks: [], fines: [], admin: newUser.admin, birthdate: newUser.birthdate, name: newUser.name, username: newUser.email, email: newUser.email
         })
       );
     } catch(e) {
       console.log(e)
     }
+
+
   }
 
   // delete user
@@ -202,6 +205,8 @@ export const AppProvider = ({ children, hub }) => {
     } catch (error) {
         console.log('error deleting user in datastore:', error);
     }
+
+
   }
 
   const setAdmin = async () => {

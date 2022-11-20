@@ -14,14 +14,14 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type UserCreateFormInputValues = {
     name?: string;
-    Field0?: string;
+    password?: string;
     email?: string;
     birthdate?: string;
     admin?: boolean;
 };
 export declare type UserCreateFormValidationValues = {
     name?: ValidationFunction<string>;
-    Field0?: ValidationFunction<string>;
+    password?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
     birthdate?: ValidationFunction<string>;
     admin?: ValidationFunction<boolean>;
@@ -30,7 +30,7 @@ export declare type FormProps<T> = Partial<T> & React.DOMAttributes<HTMLDivEleme
 export declare type UserCreateFormOverridesProps = {
     UserCreateFormGrid?: FormProps<GridProps>;
     name?: FormProps<TextFieldProps>;
-    Field0?: FormProps<PasswordFieldProps>;
+    password?: FormProps<PasswordFieldProps>;
     email?: FormProps<TextFieldProps>;
     birthdate?: FormProps<TextFieldProps>;
     admin?: FormProps<SwitchFieldProps>;

@@ -144,7 +144,7 @@ export const schema = {
                 "fines": {
                     "name": "fines",
                     "isArray": true,
-                    "type": "AWSJSON",
+                    "type": "String",
                     "isRequired": true,
                     "attributes": [],
                     "isArrayNullable": true
@@ -202,5 +202,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "d411811ccb69594009275edeb8e979f9"
+    "version": "8d4ad2c2e599141db17e12dcba0c7626"
 };

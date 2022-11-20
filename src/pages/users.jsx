@@ -1,11 +1,11 @@
-import UserRows from "@/components/UserRows"
+import UserRows from "@/components/user/UserRows"
 import AppContext from "../AppContext"
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Footer } from "@/components/Footer";
 import { Header } from '@/components/Header'
 import Head from 'next/head'
-import AddUser from "@/components/AddUser";
+import AddUser from "@/components/user/AddUser";
 
 
 export default function Users() {
